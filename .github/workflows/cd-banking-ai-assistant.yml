@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "banking-ai-assistant/**"
-      - "apps/banking-ai-assistant/**"
-      - ".github/workflows/cd-banking-ai-assistant.yml"
+    #paths:
+      #- "banking-ai-assistant/**"
+      #- "apps/banking-ai-assistant/**"
+      #- ".github/workflows/cd-banking-ai-assistant.yml"
 
 permissions:
   contents: write
