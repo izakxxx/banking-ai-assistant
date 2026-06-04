@@ -1,0 +1,53 @@
+﻿{
+    "answer":  "Dry run completed. No real API calls were executed.",
+    "confidence":  "high",
+    "sources":  [
+
+                ],
+    "execution_plan":  {
+                           "intent":  "create_savings_monthly_fee",
+                           "steps":  [
+                                         {
+                                             "step":  1,
+                                             "action":  "apply_monthly_fee_to_savings_account",
+                                             "method":  "POST",
+                                             "endpoint":  "/api/v1/savingsaccounts/1/charges",
+                                             "payload":  {
+                                                             "amount":  0.15,
+                                                             "feeOnMonthDay":  "May-13",
+                                                             "monthDayFormat":  "MMMM-dd",
+                                                             "feeInterval":  1,
+                                                             "chargeId":  2,
+                                                             "locale":  "en"
+                                                         },
+                                             "description":  "Apply a monthly fee charge to a savings account instance.",
+                                             "curl":  "curl -X POST \"http://localhost:8443/litecore-provider/api/v1/savingsaccounts/1/charges\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Accept: application/json\" \\\n  -H \"Litecore-Platform-TenantId: default\" \\\n  -H \"Authorization: Basic \u003cbase64EncodedAuthenticationKey\u003e\" \\\n  -d \u0027{\n  \"amount\": 0.15,\n  \"feeOnMonthDay\": \"May-13\",\n  \"monthDayFormat\": \"MMMM-dd\",\n  \"feeInterval\": 1,\n  \"chargeId\": 2,\n  \"locale\": \"en\"\n}\u0027",
+                                             "depends_on":  null,
+                                             "output_mapping":  null,
+                                             "is_verification":  false
+                                         }
+                                     ]
+                       },
+    "validation":  null,
+    "debug":  {
+                  "status":  "dry_run",
+                  "message":  "Dry run completed. No real API calls were executed.",
+                  "steps":  [
+                                {
+                                    "step":  1,
+                                    "action":  "apply_monthly_fee_to_savings_account",
+                                    "method":  "POST",
+                                    "endpoint":  "/api/v1/savingsaccounts/1/charges",
+                                    "payload":  {
+                                                    "amount":  0.15,
+                                                    "feeOnMonthDay":  "May-13",
+                                                    "monthDayFormat":  "MMMM-dd",
+                                                    "feeInterval":  1,
+                                                    "chargeId":  2,
+                                                    "locale":  "en"
+                                                },
+                                    "would_execute":  true
+                                }
+                            ]
+              }
+}

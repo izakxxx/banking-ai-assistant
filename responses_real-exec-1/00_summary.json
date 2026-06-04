@@ -1,0 +1,38 @@
+﻿[
+    {
+        "confidence":  "medium",
+        "step":  1,
+        "answer":  "Missing required inputs: chargeId, amount. Please provide them.",
+        "outputFile":  ".\\responses_real-exec-1\\01_create_plan.json",
+        "name":  "create_plan",
+        "message":  "create monthly maintenance fee for savings account",
+        "status":  "success"
+    },
+    {
+        "confidence":  "high",
+        "step":  2,
+        "answer":  "Execution plan is ready. Confirm if you want to run dry-run or execute.",
+        "outputFile":  ".\\responses_real-exec-1\\02_provide_parameters.json",
+        "name":  "provide_parameters",
+        "message":  "chargeId=2 amount=0.15",
+        "status":  "success"
+    },
+    {
+        "confidence":  "high",
+        "step":  3,
+        "answer":  "Dry run completed. No real API calls were executed.",
+        "outputFile":  ".\\responses_real-exec-1\\03_dry_run.json",
+        "name":  "dry_run",
+        "message":  "dry run",
+        "status":  "success"
+    },
+    {
+        "confidence":  "medium",
+        "step":  4,
+        "answer":  "Fineract authentication failed: [WinError 10061] No se puede establecer una conexiÃ³n ya que el equipo de destino denegÃ³ expresamente dicha conexiÃ³n",
+        "outputFile":  ".\\responses_real-exec-1\\04_execute.json",
+        "name":  "execute",
+        "message":  "execute",
+        "status":  "success"
+    }
+]

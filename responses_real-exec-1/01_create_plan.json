@@ -1,0 +1,117 @@
+﻿{
+    "answer":  "Missing required inputs: chargeId, amount. Please provide them.",
+    "confidence":  "medium",
+    "sources":  [
+                    {
+                        "doc_id":  "apiLive.htm",
+                        "chunk_id":  "apiLive.htm-855",
+                        "score":  0.073674,
+                        "sources":  [
+                                        "keyword",
+                                        "semantic"
+                                    ],
+                        "excerpt":  "curring fee on 10th of every two months is applied to savings account. monthDayFormat indicates day and month formatting used e.g. \"dd MMM\" for 10 May This field is mandatory if ch"
+                    },
+                    {
+                        "doc_id":  "apiLive.htm",
+                        "chunk_id":  "apiLive.htm-852",
+                        "score":  0.068141,
+                        "sources":  [
+                                        "keyword",
+                                        "semantic"
+                                    ],
+                        "excerpt":  "ted at the time of loan disbursement. 2 = Specified Due Date : Adhoc charge can be applied for loans and savings on a specified due date. 3 = Savings Activation : This charge is ap"
+                    },
+                    {
+                        "doc_id":  "apiLive.htm",
+                        "chunk_id":  "apiLive.htm-1132",
+                        "score":  0.062483,
+                        "sources":  [
+                                        "keyword",
+                                        "semantic"
+                                    ],
+                        "excerpt":  "account application. locale and dateFormat parameters must be provided with this. nominalAnnualInterestRate The interest rate set for savings account e.g. 5 % Per year - It is alwa"
+                    },
+                    {
+                        "doc_id":  "apiLive.htm",
+                        "chunk_id":  "apiLive.htm-854",
+                        "score":  0.04375,
+                        "sources":  [
+                                        "semantic"
+                                    ],
+                        "excerpt":  "ther charge is to be paid through an Account Transfer from savings or through Regular payment mode. 0=Regular, 1=Account Transfer feeOnMonthDay Used along with monthDayFormat to in"
+                    },
+                    {
+                        "doc_id":  "apiLive.htm",
+                        "chunk_id":  "apiLive.htm-1243",
+                        "score":  0.041176,
+                        "sources":  [
+                                        "semantic"
+                                    ],
+                        "excerpt":  "5?command=releaseAmount Content-Type: application/json No Request Body: { } { \"officeId\":1, \"clientId\":2, \"savingsId\":4, \"resourceId\":36 } Savings Charges Its typical for MFIs to a"
+                    },
+                    {
+                        "doc_id":  "apiLive.htm",
+                        "chunk_id":  "apiLive.htm-1367",
+                        "score":  0.04,
+                        "sources":  [
+                                        "semantic"
+                                    ],
+                        "excerpt":  "able interest rate to which penalalty can be applied on Pre-mature closure of accounts. 1=Whole Term, 2=Till Premature withdrawal e.g. â1%â means 1% less than the interest rate app"
+                    },
+                    {
+                        "doc_id":  "apiLive.htm",
+                        "chunk_id":  "apiLive.htm-1047",
+                        "score":  0.038889,
+                        "sources":  [
+                                        "semantic"
+                                    ],
+                        "excerpt":  "of month), 5=Quarterly (at end of quarter, 31st Mar, 30th Jun, 30th Sep, 31st Dec) interestCalculationType The interest calculation method used: 1=Daily Balance or 2=Average Daily "
+                    },
+                    {
+                        "doc_id":  "apiLive.htm",
+                        "chunk_id":  "apiLive.htm-1134",
+                        "score":  0.035897,
+                        "sources":  [
+                                        "semantic"
+                                    ],
+                        "excerpt":  "d used: 1=Daily Balance or 2=Average Daily Balance interestCalculationDaysInYearType The setting for number of days in year to use: 360=360 Days, 365=365 Days minRequiredOpeningBal"
+                    },
+                    {
+                        "doc_id":  "apiLive.htm",
+                        "chunk_id":  "apiLive.htm-1283",
+                        "score":  0.035,
+                        "sources":  [
+                                        "semantic"
+                                    ],
+                        "excerpt":  "d along with preClosurePenalInterest to decide what should be the applicable interest rate to which penalalty can be applied on Pre-mature closure of accounts. 1=Whole Term, 2=Till"
+                    },
+                    {
+                        "doc_id":  "apiLive.htm",
+                        "chunk_id":  "apiLive.htm-1362",
+                        "score":  0.034146,
+                        "sources":  [
+                                        "semantic"
+                                    ],
+                        "excerpt":  "ith minDepositTerm to define allowed minimum deposit term for creating a recurring deposit account using this product. 0=Days, 1=Weeks, 2=Months, 3=Years e.g. 6 Months maxDepositTe"
+                    },
+                    {
+                        "doc_id":  "apiLive.htm",
+                        "chunk_id":  "apiLive.htm-1050",
+                        "score":  0.033333,
+                        "sources":  [
+                                        "semantic"
+                                    ],
+                        "excerpt":  "allowed minimum deposit term for creating a recurring deposit account using this product. 0=Days, 1=Weeks, 2=Months, 3=Years e.g. 6 Months maxDepositTerm Optional : If provided, us"
+                    }
+                ],
+    "execution_plan":  null,
+    "validation":  null,
+    "debug":  {
+                  "status":  "needs_input",
+                  "missing_inputs":  [
+                                         "chargeId",
+                                         "amount"
+                                     ]
+              }
+}
