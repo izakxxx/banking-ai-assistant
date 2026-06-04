@@ -1,0 +1,11 @@
+*.env
+.venv/
+
+__pycache__/
+
+.env
+
+responses_real-exec-1/
+test-script.ps1
+
+mariadb_data
