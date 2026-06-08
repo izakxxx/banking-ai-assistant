@@ -21,13 +21,16 @@ def ask_llm_execution_payload_with_context(question: str, context: str) -> str:
 
     system_prompt = (
         "You are an AI planner for a banking workflow runtime. "
-        "Use the provided documentation excerpts as grounding context. "
         "Return ONLY raw JSON. No markdown. No explanations. "
         "Supported intents: onboard_client_with_savings_fee, "
         "create_savings_monthly_fee, pay_savings_charge. "
-        "Return this structure: "
+        "Return exactly this structure: "
         "{\"intent\": string, \"payload\": object}. "
-        "Do not invent unsupported fields. Use null for missing values."
+        "The payload MUST be a flat object. "
+        "Do NOT return nested objects. "
+        "Use ISO date format YYYY-MM-DD. "
+        "Use null for missing values. "
+        "Do not invent unsupported fields."
     )
 
     user_prompt = (

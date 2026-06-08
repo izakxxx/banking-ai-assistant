@@ -37,10 +37,39 @@ class OnboardClientWithSavingsFeeCapability(BaseCapability):
     intent = "onboard_client_with_savings_fee"
 
     def sanitize(self, payload: dict[str, Any]) -> dict[str, Any]:
-        normalized = dict(payload or {})
+        raw = dict(payload or {})
+
+        if "payload" in raw and isinstance(raw["payload"], dict):
+            raw = raw["payload"]
+
+        normalized = dict(raw)
+
+        alias_map = {
+            "firstname": ["firstName", "clientFirstName"],
+            "lastname": ["lastName", "clientLastName"],
+            "mobileNo": ["mobileNumber", "phone", "phoneNumber"],
+            "chargeId": ["savingsChargeId", "feeChargeId"],
+            "amount": ["chargeAmount", "feeAmount"],
+            "submittedOnDate": ["submissionDate", "submittedDate"],
+            "activationDate": ["activationDate", "submissionDate", "submittedOnDate"],
+            "savingsProductId": ["productId", "savingsProduct"],
+        }
+
+        for canonical, aliases in alias_map.items():
+            if normalized.get(canonical) is None:
+                for alias in aliases:
+                    if raw.get(alias) is not None:
+                        normalized[canonical] = raw[alias]
+                        break
+
+        client_name = raw.get("clientName")
+        if client_name and not normalized.get("firstname"):
+            parts = str(client_name).strip().split(" ", 1)
+            normalized["firstname"] = parts[0]
+            normalized["lastname"] = parts[1] if len(parts) > 1 else None
 
         normalized.setdefault("locale", "en")
-        normalized.setdefault("dateFormat", "dd MMMM yyyy")
+        normalized.setdefault("dateFormat", "yyyy-MM-dd")
         normalized.setdefault("active", True)
         normalized.setdefault("activationDate", normalized.get("submittedOnDate"))
         normalized.setdefault("legalFormId", 1)

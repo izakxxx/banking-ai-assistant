@@ -23,55 +23,6 @@ def parse_llm_json(raw_answer: str) -> dict[str, Any]:
         return {}
 
 
-def resolve_intent(
-    question: str | None,
-    explicit_intent: str | None = None,
-) -> str:
-    if explicit_intent:
-        return explicit_intent
-
-    q = (question or "").lower()
-
-    if (
-        "onboard" in q
-        or "new client" in q
-        or "create client" in q
-        or ("savings account" in q and "client" in q and "charge" in q)
-        or ("savings" in q and "client" in q and "fee" in q)
-    ):
-        return "onboard_client_with_savings_fee"
-
-    if (
-        "pay charge" in q
-        or "pay savings charge" in q
-        or "paycharge" in q
-    ):
-        return "pay_savings_charge"
-
-    if (
-        "monthly fee" in q
-        or "maintenance fee" in q
-        or "apply charge" in q
-        or "savings charge" in q
-    ):
-        return "create_savings_monthly_fee"
-
-    return "create_savings_monthly_fee"
-
-
-def build_retrieval_context(question: str, top_k: int = 5) -> str:
-    results = hybrid_retrieve(question, top_k=top_k)
-
-    if not results:
-        return ""
-
-    return "\n\n---\n\n".join(
-        f"doc_id={r.get('doc_id')} chunk_id={r.get('chunk_id')} score={r.get('score')}\n"
-        f"{r.get('snippet')}"
-        for r in results
-    )
-
-
 def build_retrieval_context(question: str, top_k: int = 5) -> str:
     results = hybrid_retrieve(question, top_k=top_k)
 
@@ -95,14 +46,6 @@ def build_plan_with_llm_payload(
     if explicit_intent:
         return explicit_intent, payload or {}
 
-    if not question:
-        return resolve_intent(question=None), payload or {}
-
-    q = question.strip().lower()
-
-    if q in {"execute", "run", "confirm", "approve"}:
-        return resolve_intent(question=question), payload or {}
-
     context = build_retrieval_context(question)
     raw_answer = ask_llm_execution_payload_with_context(question, context)
 
@@ -116,9 +59,6 @@ def build_plan_with_llm_payload(
 
     llm_intent = parsed.get("intent")
     llm_payload = parsed.get("payload")
-
-    if not isinstance(llm_intent, str):
-        llm_intent = resolve_intent(question)
 
     if not isinstance(llm_payload, dict):
         llm_payload = {}
