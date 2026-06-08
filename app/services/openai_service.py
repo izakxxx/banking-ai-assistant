@@ -48,3 +48,38 @@ def ask_llm_execution_payload_with_context(question: str, context: str) -> str:
     )
 
     return response.output_text
+
+
+def ask_llm_rag(question: str, context: str) -> str:
+    safe_question = redact_secrets(question)
+    safe_context = redact_secrets(context)
+
+    system_prompt = (
+        "You are an expert in Apache Fineract Legacy and banking systems. "
+        "Use ONLY the provided documentation excerpts. "
+        "Answer naturally and conversationally. "
+        "If the excerpts contain relevant information, explain it clearly. "
+        "When possible, mention exact field names, API parameters, endpoints, "
+        "request body fields and their meaning. "
+        "If the answer is not present in the provided excerpts, clearly say so. "
+        "Do not invent documentation."
+    )
+
+    user_prompt = (
+        f"Documentation excerpts:\n{safe_context}\n\n"
+        f"User question:\n{safe_question}"
+    )
+
+    logger.info("Solicitud RAG conversacional al modelo.")
+
+    response = client.responses.create(
+        model=settings.openai_model,
+        reasoning={"effort": "minimal"},
+        max_output_tokens=900,
+        input=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+    )
+
+    return response.output_text
