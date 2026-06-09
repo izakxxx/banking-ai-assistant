@@ -7,7 +7,7 @@ __pycache__
 
 responses_real_exec-1
 responses
-data/*
+data
 
 audit_logs
 

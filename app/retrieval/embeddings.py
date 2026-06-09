@@ -1,32 +1,39 @@
-import re
+from __future__ import annotations
+
 import numpy as np
-from collections import Counter
-from typing import Mapping, Union
-from sentence_transformers import SentenceTransformer
+from openai import OpenAI
 
-SparseVector = Union[Counter, Mapping[str, float]]
-_model = SentenceTransformer("all-MiniLM-L6-v2")
+from app.core.config import settings
 
-def tokenize(text: str) -> list[str]:
-    """
-    Tokenizer simple para texto técnico.
-    - lower
-    - mantiene underscore (_) para identifiers tipo feeOnMonthDay, chunk_id, etc.
-    - filtra tokens muy cortos
-    """
-    text = text.lower()
-    text = re.sub(r"[^a-z0-9_\s]", " ", text)
-    return [t for t in text.split() if len(t) > 2]
+EMBEDDING_MODEL = "text-embedding-3-small"
+
+_client = OpenAI(api_key=settings.openai_api_key)
 
 
 def embed(text: str) -> list[float]:
-    return _model.encode(text).tolist()
+    vectors = embed_batch([text])
+    return vectors[0] if vectors else []
+
+
+def embed_batch(texts: list[str]) -> list[list[float]]:
+    clean_texts = [str(text).strip() for text in texts if str(text).strip()]
+
+    if not clean_texts:
+        return []
+
+    response = _client.embeddings.create(
+        model=EMBEDDING_MODEL,
+        input=clean_texts,
+    )
+
+    return [item.embedding for item in response.data]
+
 
 def cosine_similarity(v1: list[float], v2: list[float]) -> float:
-    v1 = np.array(v1)
-    v2 = np.array(v2)
+    a = np.array(v1)
+    b = np.array(v2)
 
-    if v1.size == 0 or v2.size == 0:
+    if a.size == 0 or b.size == 0:
         return 0.0
 
-    return float(np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2)))
+    return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
