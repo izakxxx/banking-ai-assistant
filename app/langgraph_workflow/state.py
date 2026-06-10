@@ -16,6 +16,9 @@ class FineractAgentState(TypedDict, total=False):
     execution_plan: MultiStepExecutionPlan | None
     validation: dict[str, Any] | None
 
+    pre_validation: dict[str, Any] | None
+    pre_validation_passed: bool
+
     command: str | None
 
     approval_required: bool

@@ -39,6 +39,9 @@ class OnboardClientWithSavingsFeeCapability(BaseCapability):
     def sanitize(self, payload: dict[str, Any]) -> dict[str, Any]:
         raw = dict(payload or {})
 
+        print("RAW PAYLOAD:")
+        print(raw)
+
         if "payload" in raw and isinstance(raw["payload"], dict):
             raw = raw["payload"]
 
@@ -48,8 +51,23 @@ class OnboardClientWithSavingsFeeCapability(BaseCapability):
             "firstname": ["firstName", "clientFirstName"],
             "lastname": ["lastName", "clientLastName"],
             "mobileNo": ["mobileNumber", "phone", "phoneNumber"],
-            "chargeId": ["savingsChargeId", "feeChargeId"],
-            "amount": ["chargeAmount", "feeAmount"],
+
+            "chargeId": [
+                "savingsChargeId",
+                "feeChargeId",
+                "savingsFeeId",
+                "savingsMonthlyFeeChargeId",
+                "monthlyFeeChargeId",
+            ],
+
+            "amount": [
+                "chargeAmount",
+                "feeAmount",
+                "savingsFeeAmount",
+                "savingsMonthlyFeeAmount",
+                "monthlyFeeAmount",
+            ],
+
             "submittedOnDate": ["submissionDate", "submittedDate"],
             "activationDate": ["activationDate", "submissionDate", "submittedOnDate"],
             "savingsProductId": ["productId", "savingsProduct"],
@@ -77,6 +95,9 @@ class OnboardClientWithSavingsFeeCapability(BaseCapability):
         normalized.setdefault("feeOnMonthDay", "May-13")
         normalized.setdefault("monthDayFormat", "MMMM-dd")
         normalized.setdefault("feeInterval", 1)
+
+        print("SANITIZED PAYLOAD:")
+        print(normalized)
 
         return normalized
 
@@ -121,7 +142,7 @@ class OnboardClientWithSavingsFeeCapability(BaseCapability):
                 },
                 description="Create a new client.",
                 output_mapping={
-                    "clientId": "body.clientId",
+                    "clientId": "body.resourceId",
                     "resourceId": "body.resourceId",
                 },
             ),
@@ -139,7 +160,7 @@ class OnboardClientWithSavingsFeeCapability(BaseCapability):
                 description="Create a savings account for the new client.",
                 depends_on=[1],
                 output_mapping={
-                    "savingsId": "body.savingsId",
+                    "savingsId": "body.resourceId",
                     "savingsResourceId": "body.resourceId",
                 },
             ),

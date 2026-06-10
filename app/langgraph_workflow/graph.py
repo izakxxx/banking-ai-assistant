@@ -9,6 +9,7 @@ from app.execution.executor import dry_run_execution, execute_plan_real
 from app.langgraph_workflow.state import FineractAgentState
 from app.services.execution_service import build_execution_plan
 from langgraph.checkpoint.sqlite import SqliteSaver
+from app.validators.registry import pre_execution_validator_registry
 import sqlite3
 from pathlib import Path
 
@@ -88,6 +89,39 @@ def build_plan_node(state: FineractAgentState) -> FineractAgentState:
     }
 
 
+def pre_validate_node(state: FineractAgentState) -> FineractAgentState:
+    intent = state.get("intent")
+    plan = state.get("execution_plan")
+
+    if not intent or plan is None:
+        return {
+            **state,
+            "pre_validation": None,
+            "pre_validation_passed": True,
+        }
+
+    validator = pre_execution_validator_registry.get(intent)
+
+    if validator is None:
+        return {
+            **state,
+            "pre_validation": None,
+            "pre_validation_passed": True,
+        }
+
+    result = validator.validate(
+        payload=state.get("initial_payload") or {},
+        account_id=state.get("account_id"),
+        tenant_id=state.get("tenant_id") or "default",
+    )
+
+    return {
+        **state,
+        "pre_validation": result.model_dump(),
+        "pre_validation_passed": result.passed,
+    }
+
+
 def approval_node(state: FineractAgentState) -> FineractAgentState:
     command = state.get("command")
 
@@ -157,8 +191,14 @@ def final_response_node(state: FineractAgentState) -> FineractAgentState:
     validation = state.get("validation") or {}
     plan = state.get("execution_plan")
 
+    pre_validation = state.get("pre_validation") or {}
+
     if result:
         answer = result.get("message", "Execution finished.")
+
+    elif pre_validation and not pre_validation.get("passed", True):
+        errors = pre_validation.get("errors", [])
+        answer = f"Pre-execution validation failed: {', '.join(errors)}"
 
     elif validation and not validation.get("is_valid", True):
         errors = validation.get("errors", [])
@@ -204,6 +244,16 @@ def route_after_plan(state: FineractAgentState) -> str:
     if validation and not validation.get("is_valid", True):
         return "final_response"
 
+    if state.get("execution_plan") is not None:
+        return "pre_validate"
+
+    return "final_response"
+
+
+def route_after_pre_validation(state: FineractAgentState) -> str:
+    if not state.get("pre_validation_passed", True):
+        return "final_response"
+
     return "final_response"
 
 
@@ -220,6 +270,7 @@ def build_fineract_agent_graph():
     graph.add_node("parse_input", parse_input_node)
     graph.add_node("load_session", load_session_node)
     graph.add_node("build_plan", build_plan_node)
+    graph.add_node("pre_validate", pre_validate_node)
     graph.add_node("approval", approval_node)
     graph.add_node("dry_run", dry_run_node)
     graph.add_node("execute", execute_node)
@@ -242,6 +293,15 @@ def build_fineract_agent_graph():
     graph.add_conditional_edges(
         "build_plan",
         route_after_plan,
+        {
+            "pre_validate": "pre_validate",
+            "final_response": "final_response",
+        },
+    )
+
+    graph.add_conditional_edges(
+        "pre_validate",
+        route_after_pre_validation,
         {
             "final_response": "final_response",
         },

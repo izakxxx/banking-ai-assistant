@@ -4,6 +4,7 @@ from app.agent.session_store import session_store
 from app.agent.input_parser import parse_user_inputs
 from app.services.execution_service import build_execution_plan
 from app.schemas.chat import ValidationResult
+from app.validators.registry import pre_execution_validator_registry
 
 
 def extract_missing(validation: ValidationResult) -> list[str]:
@@ -51,6 +52,23 @@ def run_agent(
                 "status": "needs_input",
                 "missing_inputs": missing,
             }
+        
+        validator = pre_execution_validator_registry.get(intent)
+
+        if validator:
+            pre_validation = validator.validate(
+                payload=initial_payload,
+                account_id=account_id,
+                tenant_id=tenant_id,
+            )
+
+            if not pre_validation.passed:
+                return {
+                    "status": "validation_failed",
+                    "message": "Pre-execution validation failed.",
+                    "pre_validation": pre_validation.model_dump(),
+                    "validation_errors": pre_validation.errors,
+                }
 
         if plan is None:
             return {
@@ -98,6 +116,23 @@ def run_agent(
             "missing_inputs": missing,
         }
     
+    validator = pre_execution_validator_registry.get(intent)
+
+    if validator:
+        pre_validation = validator.validate(
+            payload=session["payload"],
+            account_id=account_id,
+            tenant_id=tenant_id,
+        )
+
+        if not pre_validation.passed:
+            return {
+                "status": "validation_failed",
+                "message": "Pre-execution validation failed.",
+                "pre_validation": pre_validation.model_dump(),
+                "validation_errors": pre_validation.errors,
+            }
+
     if plan is None:
         session_store.set(session_id, session)
         return {
