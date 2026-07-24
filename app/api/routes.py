@@ -4,16 +4,50 @@ from fastapi import APIRouter, HTTPException
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.langgraph_workflow.graph import fineract_agent_graph
 from app.observability.execution_analytics import build_execution_analytics
-from app.retrieval.hybrid_retriever import hybrid_retrieve
+from app.retrieval.hybrid_retriever import hybrid_retrieve, hybrid_retrieve_debug
 from app.services.openai_service import ask_llm_rag
+from app.retrieval.context_builder import build_rag_context, build_context_debug
+from app.planning.planner_models import PlannerResult, PlanningRequest
+from app.planning.planner_service import PlannerService
 
 logger = logging.getLogger("routes")
 router = APIRouter()
+planner_service = PlannerService()
+
 
 @router.get("/health")
 def health() -> dict:
     return {"status": "ok"}
 
+@router.post("/retrieval/debug")
+def retrieval_debug(req: ChatRequest):
+    try:
+        return hybrid_retrieve_debug(
+            query=req.message,
+            top_k=5,
+        )
+
+    except Exception as e:
+        logger.exception("Error procesando /retrieval/debug")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/planning/debug", response_model=PlannerResult)
+def planning_debug(req: PlanningRequest) -> PlannerResult:
+    try:
+        return planner_service.plan(
+            request=req.message,
+            payload=req.payload,
+            account_id=req.account_id,
+            tenant_id=req.tenant_id,
+            mode=req.mode,
+        )
+    except Exception as e:
+        logger.exception("Error processing /planning/debug")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ---------------------------------------------------------------------------------------------------------------
 
 @router.post("/chat-rag-graph", response_model=ChatResponse)
 def chat_rag_graph(req: ChatRequest) -> ChatResponse:
@@ -110,11 +144,7 @@ def chat_docs(req: ChatRequest) -> ChatResponse:
     try:
         results = hybrid_retrieve(req.message, top_k=5)
 
-        context = "\n\n---\n\n".join(
-            f"doc_id={r.get('doc_id')} chunk_id={r.get('chunk_id')} score={r.get('score')}\n"
-            f"{r.get('snippet')}"
-            for r in results
-        )
+        context = build_rag_context(results)
 
         answer = ask_llm_rag(
             question=req.message,
@@ -129,6 +159,7 @@ def chat_docs(req: ChatRequest) -> ChatResponse:
             validation=None,
             debug={
                 "retrieval_results": results,
+                "context_debug": build_context_debug(results),
                 "context": context,
             } if req.debug else None,
         )

@@ -60,7 +60,7 @@ def semantic_retrieve(query: str, top_k: int = 5, min_score: float | None = None
             "doc_id": item["doc_id"],
             "chunk_id": item["chunk_id"],
             "score": round(float(score), 4),
-            "snippet": item["text"][:300].replace("\n", " "),
+            "snippet": item["text"][:800].replace("\n", " "),
         })
 
     return results

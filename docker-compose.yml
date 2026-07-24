@@ -56,19 +56,19 @@ services:
       LITECORE_DEFAULT_TENANTDB_UID: admin
       LITECORE_DEFAULT_TENANTDB_PWD: admin123
 
-  admin:
-    image: chacoxxx/fineract-ai-asistant:admin
-    ports:
-      - "4201:4201"
-    environment:
-      - LITECOREBACK_API_URLS=http://localhost:8443
-      - LITECOREBACK_API_URL=http://localhost:8443
-      - LITECOREBACK_API_PROVIDER=/litecore-provider/api
-      - LITECOREBACK_API_VERSION=/v1
-      - LITECOREBACK_PLATFORM_TENANT_IDENTIFIER=default
-      - LITECORE_DEFAULT_LANGUAGE=es-MX
-      - LITECORE_SUPPORTED_LANGUAGES=cs-CS,de-DE,en-US,es-MX,fr-FR,it-IT,ko-KO,lt-LT,lv-LV,ne-NE,pt-PT,sw-SW
-      - LITECORE_SESSION_IDLE_TIMEOUT=300000
+  #admin:
+  #  image: chacoxxx/fineract-ai-asistant:admin
+  #  ports:
+  #    - "4201:4201"
+  #  environment:
+  #    - LITECOREBACK_API_URLS=http://localhost:8443
+  #    - LITECOREBACK_API_URL=http://localhost:8443
+  #    - LITECOREBACK_API_PROVIDER=/litecore-provider/api
+  #    - LITECOREBACK_API_VERSION=/v1
+  #    - LITECOREBACK_PLATFORM_TENANT_IDENTIFIER=default
+  #    - LITECORE_DEFAULT_LANGUAGE=es-MX
+  #    - LITECORE_SUPPORTED_LANGUAGES=cs-CS,de-DE,en-US,es-MX,fr-FR,it-IT,ko-KO,lt-LT,lv-LV,ne-NE,pt-PT,sw-SW
+  #    - LITECORE_SESSION_IDLE_TIMEOUT=300000
 
 volumes:
   mariadb_data:
